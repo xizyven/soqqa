@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { AppProvider } from "@/components/providers/app-provider";
+import { withBase } from "@/lib/env";
 
 export const metadata: Metadata = {
   title: { default: "Soqqa — shaxsiy moliya", template: "%s · Soqqa" },
@@ -8,7 +9,7 @@ export const metadata: Metadata = {
   applicationName: "Soqqa",
   appleWebApp: { capable: true, title: "Soqqa", statusBarStyle: "black-translucent" },
   formatDetection: { telephone: false },
-  icons: { icon: [{ url: "/icons/icon.svg", type: "image/svg+xml" }, { url: "/icons/icon-192.png", sizes: "192x192" }], apple: "/icons/apple-touch-icon.png" },
+  icons: { icon: [{ url: withBase("/icons/icon.svg"), type: "image/svg+xml" }, { url: withBase("/icons/icon-192.png"), sizes: "192x192" }], apple: withBase("/icons/apple-touch-icon.png") },
 };
 
 export const viewport: Viewport = {

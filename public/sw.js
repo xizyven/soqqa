@@ -16,7 +16,10 @@ const VERSION = `soqqa-${BUILD}`;
 const SHELL = `${VERSION}-shell`;
 const STATIC = `${VERSION}-static`;
 const RUNTIME = `${VERSION}-runtime`;
-const ROUTES = ["/", "/transactions", "/wallets", "/budgets", "/analytics", "/goals", "/advisor", "/settings", "/welcome", "/auth", "/offline.html"];
+// Base path of the deployment ("" at the domain root, "/soqqa" on GitHub Pages).
+const BASE = new URL(self.registration.scope).pathname.replace(/\/$/, "");
+const p = (path) => BASE + path;
+const ROUTES = ["/", "/transactions", "/wallets", "/budgets", "/analytics", "/goals", "/advisor", "/settings", "/welcome", "/auth", "/offline.html"].map(p);
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
@@ -24,7 +27,7 @@ self.addEventListener("install", (event) => {
       const shell = await caches.open(SHELL);
       await Promise.all(ROUTES.map((r) => shell.add(new Request(r, { cache: "reload" })).catch(() => undefined)));
       try {
-        const res = await fetch("/precache-manifest.json", { cache: "no-store" });
+        const res = await fetch(p("/precache-manifest.json"), { cache: "no-store" });
         if (res.ok) {
           const { assets = [], build } = await res.json();
           const stat = await caches.open(STATIC);
@@ -32,7 +35,7 @@ self.addEventListener("install", (event) => {
           for (let i = 0; i < assets.length; i += 20) {
             await Promise.all(assets.slice(i, i + 20).map((a) => stat.add(a).catch(() => undefined)));
           }
-          await shell.put("/__build", new Response(String(build ?? "")));
+          await shell.put(p("/__build"), new Response(String(build ?? "")));
         }
       } catch {
         /* offline during install: runtime caching will fill in */
@@ -48,7 +51,7 @@ self.addEventListener("activate", (event) => {
       await Promise.all(keys.filter((k) => k.startsWith("soqqa-") && !k.startsWith(`${VERSION}-`)).map((k) => caches.delete(k)));
       // Drop static assets from older builds (hashed names no longer referenced).
       try {
-        const res = await fetch("/precache-manifest.json", { cache: "no-store" });
+        const res = await fetch(p("/precache-manifest.json"), { cache: "no-store" });
         if (res.ok) {
           const { assets = [] } = await res.json();
           const keep = new Set(assets.map((a) => new URL(a, self.location.origin).pathname));
@@ -76,9 +79,9 @@ self.addEventListener("fetch", (event) => {
   if (request.method !== "GET") return;
   const url = new URL(request.url);
   if (url.origin !== self.location.origin) return;
-  if (url.pathname.startsWith("/api/")) return;
+  if (url.pathname.startsWith(p("/api/"))) return;
 
-  if (url.pathname.startsWith("/_next/static/") || url.pathname.startsWith("/icons/") || /\.(woff2?|png|svg|ico)$/.test(url.pathname)) {
+  if (url.pathname.startsWith(p("/_next/static/")) || url.pathname.startsWith(p("/icons/")) || /\.(woff2?|png|svg|ico)$/.test(url.pathname)) {
     event.respondWith(
       caches.match(request).then(
         (hit) =>
@@ -122,7 +125,7 @@ self.addEventListener("fetch", (event) => {
           return res;
         } catch {
           const cache = await caches.open(SHELL);
-          return (await cache.match(url.pathname)) || (await cache.match("/")) || (await cache.match("/offline.html")) || Response.error();
+          return (await cache.match(url.pathname)) || (await cache.match(p("/"))) || (await cache.match(p("/offline.html"))) || Response.error();
         }
       })(),
     );

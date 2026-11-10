@@ -17,6 +17,8 @@ import { download, exportJson, transactionsCsv } from "@/lib/data/export";
 import { ValidationError } from "@/lib/data/repo";
 import { errorMessage, fieldError } from "@/lib/i18n/translate";
 import { getSupabase } from "@/lib/supabase/client";
+import { STATIC_EXPORT } from "@/lib/env";
+import { CBU_URL, parseCbuRows, type CbuRow } from "@/lib/domain/cbu";
 
 const TIMEZONES = ["Asia/Tashkent", "Asia/Samarkand", "Asia/Almaty", "Asia/Dubai", "Europe/Moscow", "Europe/Istanbul", "Europe/London", "Europe/Berlin", "America/New_York", "Asia/Seoul", "UTC"];
 
@@ -146,9 +148,12 @@ function RatesSection() {
   const fetchCbu = async () => {
     setFetching(true);
     try {
-      const res = await fetch("/api/rates/cbu");
+      // The static (GitHub Pages) build has no server proxy; CBU allows CORS.
+      const res = await fetch(STATIC_EXPORT ? CBU_URL : "/api/rates/cbu");
       if (!res.ok) throw new Error(String(res.status));
-      const data = (await res.json()) as { rates: { currency: "USD" | "EUR" | "RUB"; rate: string; date: string }[] };
+      const data = STATIC_EXPORT
+        ? { rates: parseCbuRows((await res.json()) as CbuRow[]) }
+        : ((await res.json()) as { rates: { currency: "USD" | "EUR" | "RUB"; rate: string; date: string }[] });
       const added = await repo.addRatesIfNew(data.rates.map((r) => ({ currency: r.currency, uzs_per_unit: r.rate, effective_date: r.date, source: "cbu" as const })));
       toast({ message: added ? t("settings.ratesFetched", { n: added }) : t("settings.ratesUpToDate"), tone: "success" });
     } catch {

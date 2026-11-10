@@ -12,6 +12,7 @@ import { InsightItem, useInsightText } from "../insights/insight-item";
 import { BadgeMedal, GapPromptCard } from "./parts";
 import { newlyEarned } from "@/lib/domain/achievements";
 import type { TKey } from "@/lib/i18n/translate";
+import { withBase } from "@/lib/env";
 
 const READ_KEY = "notif_read";
 const SENT_KEY = "notif_sent";
@@ -127,7 +128,7 @@ export function IntelligenceWatcher() {
         const body = n.insight ? render(n.insight).text : n.gap ? t(`remind.body_${n.gap.reason}` as TKey, { typical: n.gap.typical, recorded: n.gap.recorded }) : n.badge ? t(`badges.desc.${n.badge.key}` as TKey) : "";
         const title = n.badge ? t("badges.toast", { name: t(`badges.name.${n.badge.key}` as TKey) }) : n.gap ? t(`remind.title_${n.gap.reason}` as TKey, { date: n.gap.date }) : "Soqqa";
         try {
-          new Notification(title, { body, icon: "/icons/icon-192.png", tag: n.id });
+          new Notification(title, { body, icon: withBase("/icons/icon-192.png"), tag: n.id });
         } catch {
           /* some platforms only allow notifications from a service worker */
         }

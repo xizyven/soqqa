@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Download, RefreshCw, X } from "lucide-react";
 import { useApp } from "../providers/app-provider";
+import { withBase } from "@/lib/env";
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
@@ -31,7 +32,7 @@ export function PwaManager() {
       });
     };
     navigator.serviceWorker
-      .register("/sw.js", { scope: "/", updateViaCache: "none" })
+      .register(withBase("/sw.js"), { scope: withBase("/"), updateViaCache: "none" })
       .then((r) => {
         reg = r;
         track(r);

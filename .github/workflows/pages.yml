@@ -1,0 +1,56 @@
+# Deploys the static (offline-AI) build of Soqqa to GitHub Pages.
+# Server routes (cloud AI, CBU proxy) are removed for this build; the app uses
+# its offline parser/advisor and fetches CBU rates directly from the browser.
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Remove server-only routes (not supported by static export)
+        run: rm -rf src/app/api
+      - name: Build static site
+        run: npm run build
+        env:
+          STATIC_EXPORT: "1"
+          BASE_PATH: /${{ github.event.repository.name }}
+          # Optional: set these as repository variables to enable cloud sync.
+          NEXT_PUBLIC_SUPABASE_URL: ${{ vars.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ vars.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+      - name: Write flat RSC prefetch files for static hosting
+        run: node scripts/flatten-rsc-segments.mjs out
+      - name: Disable Jekyll
+        run: touch out/.nojekyll
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: out
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

@@ -3,6 +3,7 @@
  * the server. Every call degrades gracefully to the offline engines.
  */
 import { getSupabase } from "../supabase/client";
+import { STATIC_EXPORT } from "../env";
 import type { ParsedTransaction, ParserWallet } from "./parser";
 import type { Locale, LocalDate } from "../domain/types";
 
@@ -16,6 +17,8 @@ async function authHeader(): Promise<Record<string, string>> {
 }
 
 async function post<T>(path: string, body: unknown, timeoutMs = 20000): Promise<T> {
+  // Static builds (GitHub Pages) have no server routes: use the offline engines.
+  if (STATIC_EXPORT) throw new CloudUnavailableError("static");
   if (typeof navigator !== "undefined" && !navigator.onLine) throw new CloudUnavailableError("offline");
   const ctrl = new AbortController();
   const timer = setTimeout(() => ctrl.abort(), timeoutMs);
