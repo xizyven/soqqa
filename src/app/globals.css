@@ -1,0 +1,431 @@
+@import "tailwindcss";
+@import "@fontsource-variable/inter";
+@import "@fontsource-variable/jetbrains-mono";
+@import "@fontsource-variable/outfit";
+
+/*
+ * SOQQA — "Ishkor" design tokens.
+ *
+ * Named after the cobalt-on-porcelain glaze of Rishtan pottery: a cool porcelain
+ * ground, navy brand surfaces, royal blue from the logo ribbon, and a few
+ * supporting hues from Uzbek tilework and textiles (Samarkand green for
+ * income, pomegranate for expense, saffron for warnings, lapis for AI).
+ *
+ *   navy     #071330  sidebar (light), hero panels, user chat bubbles
+ *   royal    #2F69E8  primary action (light) · #4C86F7 text/lines (dark)
+ *   porcelain#F3F5F9  light ground
+ *
+ * Fills that carry white text have their own "-fill/-strong" tokens so the
+ * text-coloured tokens can stay bright in dark mode without failing contrast.
+ */
+:root {
+  color-scheme: dark;
+  --bg: #060e24;
+  --bg-2: #040a1c;
+  --surface: #0b1736;
+  --surface-2: #0f1d42;
+  --surface-3: #16284f;
+  --border: #1a2a52;
+  --border-strong: #243766;
+  --text: #edf2ff;
+  --text-2: #a3b0ce;
+  --text-3: #8796ba;
+
+  --brand: #4c86f7;
+  --brand-fill: #3570ec;
+  --brand-hi: #6a9bfa;
+  --brand-deep: #2453c8;
+  --brand-ink: #c3d7ff;
+  --brand-soft: rgba(76, 134, 247, 0.16);
+  --brand-line: rgba(122, 167, 247, 0.42);
+  --on-brand: #ffffff;
+
+  --accent: var(--brand);
+  --accent-soft: var(--brand-soft);
+  --income: #5ee0b0;
+  --income-strong: #0b7a5c;
+  --income-soft: rgba(60, 203, 156, 0.14);
+  --expense: #ff8fa0;
+  --expense-strong: #b42840;
+  --expense-soft: rgba(255, 143, 160, 0.13);
+  --ai: #c3baff;
+  --ai-strong: #6252e6;
+  --ai-soft: rgba(156, 141, 255, 0.16);
+  --warning: #f2cf7e;
+  --warning-soft: rgba(242, 207, 126, 0.14);
+  --gold: #f2cf7e;
+
+  --viz-income: #199e70;
+  --viz-expense: #f43f5e;
+  --viz-net: #6b7ba3;
+  --viz-grid: #13234a;
+  --viz-seq: 76, 134, 247;
+
+  /* Navy rail (sidebar) and hero panels. */
+  --rail: #040a1c;
+  --rail-edge: #13234a;
+  --rail-fg: #ffffff;
+  --rail-fg-2: #a3b0ce;
+  --rail-fg-3: #8796ba;
+  --rail-active: #0f1d42;
+  --rail-active-ring: #1a2a52;
+  --rail-card: #0a1533;
+  --panel: #102255;
+  --panel-ring: #24407f;
+  --bubble: #1a2c5c;
+
+  --ornament: rgba(120, 160, 240, 0.09);
+  --shadow-sm: none;
+  --shadow: none;
+  --shadow-lg: 0 28px 56px -18px rgba(0, 0, 0, 0.75);
+  --overlay: rgba(2, 7, 20, 0.66);
+  --khatam-core: transparent;
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+  --bg: #f3f5f9;
+  --bg-2: #ffffff;
+  --surface: #ffffff;
+  --surface-2: #f1f4f9;
+  --surface-3: #e9edf4;
+  --border: #e3e7ef;
+  --border-strong: #d3d9e4;
+  --text: #0a1430;
+  --text-2: #4a5672;
+  --text-3: #5a6580;
+
+  --brand: #2f69e8;
+  --brand-fill: #2f69e8;
+  --brand-hi: #2459d0;
+  --brand-deep: #1840a8;
+  --brand-ink: #0a1430;
+  --brand-soft: #e9f0fd;
+  --brand-line: rgba(47, 105, 232, 0.32);
+
+  --income: #08664f;
+  --income-strong: #0b7a5c;
+  --income-soft: #e6f4f0;
+  --expense: #b42840;
+  --expense-strong: #b42840;
+  --expense-soft: #fbe9ec;
+  --ai: #4a3bc4;
+  --ai-strong: #4a3bc4;
+  --ai-soft: #eeebfd;
+  --warning: #7a5410;
+  --warning-soft: #fbf1dc;
+  --gold: #9a6a0e;
+
+  --viz-income: #0f8a60;
+  --viz-expense: #e11d48;
+  --viz-net: #5b667c;
+  --viz-grid: #eef1f6;
+  --viz-seq: 47, 105, 232;
+
+  --rail: #071330;
+  --rail-edge: transparent;
+  --rail-fg: #ffffff;
+  --rail-fg-2: #b5c2de;
+  --rail-fg-3: #7d90bd;
+  --rail-active: rgba(255, 255, 255, 0.08);
+  --rail-active-ring: transparent;
+  --rail-card: rgba(255, 255, 255, 0.05);
+  --panel: #071330;
+  --panel-ring: transparent;
+  --bubble: #071330;
+
+  --ornament: rgba(10, 20, 48, 0.05);
+  --shadow-sm: 0 1px 2px rgba(10, 20, 48, 0.05);
+  --shadow: 0 1px 2px rgba(10, 20, 48, 0.04);
+  --shadow-lg: 0 2px 6px rgba(10, 20, 48, 0.05), 0 28px 56px -20px rgba(10, 20, 48, 0.22);
+  --overlay: rgba(7, 19, 48, 0.36);
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-bg-2: var(--bg-2);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
+  --color-line: var(--border);
+  --color-line-strong: var(--border-strong);
+  --color-fg: var(--text);
+  --color-fg-2: var(--text-2);
+  --color-fg-3: var(--text-3);
+  --color-brand: var(--brand);
+  --color-brand-fill: var(--brand-fill);
+  --color-brand-hi: var(--brand-hi);
+  --color-brand-deep: var(--brand-deep);
+  --color-brand-ink: var(--brand-ink);
+  --color-brand-soft: var(--brand-soft);
+  --color-brand-line: var(--brand-line);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-income: var(--income);
+  --color-income-strong: var(--income-strong);
+  --color-income-soft: var(--income-soft);
+  --color-expense: var(--expense);
+  --color-expense-strong: var(--expense-strong);
+  --color-expense-soft: var(--expense-soft);
+  --color-ai: var(--ai);
+  --color-ai-strong: var(--ai-strong);
+  --color-ai-soft: var(--ai-soft);
+  --color-warning: var(--warning);
+  --color-warning-soft: var(--warning-soft);
+  --color-gold: var(--gold);
+  --color-viz-income: var(--viz-income);
+  --color-viz-expense: var(--viz-expense);
+  --color-rail: var(--rail);
+  --color-rail-fg: var(--rail-fg);
+  --color-rail-fg-2: var(--rail-fg-2);
+  --color-rail-fg-3: var(--rail-fg-3);
+  --color-rail-active: var(--rail-active);
+  --color-panel: var(--panel);
+  --color-bubble: var(--bubble);
+  --font-sans: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Outfit Variable", "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono Variable", ui-monospace, monospace;
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+  --animate-rise: rise 0.32s var(--ease-out-soft) both;
+  --animate-fade: fade 0.3s ease both;
+  --animate-spin-slow: spin 14s linear infinite;
+}
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+* {
+  border-color: var(--border);
+}
+
+html {
+  background: var(--bg);
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-feature-settings: "cv11", "ss03";
+  min-height: 100dvh;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: var(--brand-soft);
+  color: var(--text);
+}
+
+/* Financial figures: monospaced, tabular, slashed zero. */
+.num {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums slashed-zero;
+  font-feature-settings: "tnum", "zero";
+  letter-spacing: -0.025em;
+}
+
+/* Section/page titles use the logo's geometric face. */
+.display {
+  font-family: var(--font-display);
+  letter-spacing: -0.025em;
+}
+
+/* Small uppercase label used above values and form fields. */
+.eyebrow {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  box-shadow: var(--shadow);
+}
+
+/* Interactive card: lifts its border, not its position. */
+.card-hover {
+  transition: border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.25s ease;
+}
+.card-hover:hover {
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow-lg);
+}
+
+/*
+ * Girih field — a tile of eight-pointed stars and crosses drawn in var(--ornament).
+ * Applied via a mask so it follows the theme. Use on large/navy surfaces only.
+ */
+.girih {
+  position: relative;
+  isolation: isolate;
+}
+.girih::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: var(--ornament);
+  -webkit-mask-image: var(--girih-tile), linear-gradient(115deg, transparent 30%, #000 85%);
+  -webkit-mask-size: 64px 64px, 100% 100%;
+  -webkit-mask-repeat: repeat, no-repeat;
+  -webkit-mask-composite: source-in;
+  mask-image: var(--girih-tile), linear-gradient(115deg, transparent 30%, #000 85%);
+  mask-size: 64px 64px, 100% 100%;
+  mask-repeat: repeat, no-repeat;
+  mask-composite: intersect;
+  pointer-events: none;
+}
+:root {
+  --girih-tile: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cg fill='none' stroke='%23000' stroke-width='1.1'%3E%3Cpath d='M32 14l5.3 5.3h7.4v7.4L50 32l-5.3 5.3v7.4h-7.4L32 50l-5.3-5.3h-7.4v-7.4L14 32l5.3-5.3v-7.4h7.4z'/%3E%3Cpath d='M32 14V0M50 32h14M32 50v14M14 32H0M44.7 19.3L64 0M44.7 44.7L64 64M19.3 44.7L0 64M19.3 19.3L0 0'/%3E%3Ccircle cx='32' cy='32' r='6'/%3E%3C/g%3E%3C/svg%3E");
+  /* Hoshiya — a tile frieze of khatam stars and saffron lozenges. */
+  --hoshiya-tile: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='24' viewBox='0 0 28 24'%3E%3Cpath d='M7 6L8.76 7.76H11.24V10.24L13 12L11.24 13.76V16.24H8.76L7 18L5.24 16.24H2.76V13.76L1 12L2.76 10.24V7.76H5.24Z' fill='%234C86F7'/%3E%3Cpath d='M21 8.5L24.5 12L21 15.5L17.5 12Z' fill='%23F2CF7E'/%3E%3C/svg%3E");
+}
+
+/* Hoshiya frieze: a ruled band of stars and lozenges for brand moments. */
+.hoshiya {
+  height: 26px;
+  background-image: var(--hoshiya-tile);
+  background-repeat: repeat-x;
+  background-position: -1px center;
+  border-top: 1px solid rgba(122, 167, 247, 0.28);
+  border-bottom: 1px solid rgba(122, 167, 247, 0.28);
+}
+
+/* Fine diagonal hatching (ikat-like) for overspend segments and empty data. */
+.hatch {
+  background-image: repeating-linear-gradient(-45deg, currentColor 0 1.5px, transparent 1.5px 5px);
+}
+
+.focus-ring:focus-visible,
+button:focus-visible,
+a:focus-visible,
+[role="button"]:focus-visible,
+[role="tab"]:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--brand-hi);
+  outline-offset: 2px;
+}
+
+.scroll-thin {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-strong) transparent;
+}
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(0.65);
+  cursor: pointer;
+}
+:root[data-theme="light"] input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: none;
+  opacity: 0.6;
+}
+input[type="range"] {
+  accent-color: var(--brand);
+}
+
+.skeleton {
+  background: linear-gradient(90deg, var(--surface-2), var(--surface-3), var(--surface-2));
+  background-size: 200% 100%;
+  animation: shimmer 1.6s ease-in-out infinite;
+  border-radius: 18px;
+}
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* Khatam progress draws its stroke on first view. */
+.khatam-progress {
+  transition: stroke-dasharray 0.7s var(--ease-out-soft);
+}
+
+/* Theme switch: a single, smooth colour cross-fade (or a View Transition reveal). */
+html.theme-anim,
+html.theme-anim *,
+html.theme-anim *::before,
+html.theme-anim *::after {
+  transition: background-color 0.35s ease, border-color 0.35s ease, color 0.3s ease, fill 0.3s ease, stroke 0.3s ease, box-shadow 0.35s ease !important;
+}
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+::view-transition-new(root) {
+  z-index: 2;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@media print {
+  .no-print { display: none !important; }
+  :root { --bg: #fff; --surface: #fff; --text: #0b1020; --text-2: #475569; --border: #e2e8f0; }
+  body { background: #fff; }
+  .card { box-shadow: none; break-inside: avoid; }
+}
+
+/* Printing the monthly report: show only the report dialog. */
+@media print {
+  body:has(#report) > *:not(:has(#report)) { display: none !important; }
+  body:has(#report) [role="dialog"] { position: static !important; max-height: none !important; border: 0 !important; box-shadow: none !important; transform: none !important; }
+  body:has(#report) .fixed { position: static !important; }
+  body:has(#report) [data-overlay] { display: none !important; }
+}
+
+/*
+ * Brand panel — the navy tile from the brand sheet, used for hero surfaces in
+ * both themes (it is the brand's signature ground, not a theme surface). Flat
+ * navy with a girih field — no gradient wash.
+ */
+.brand-panel {
+  --ornament: rgba(159, 192, 255, 0.13);
+  position: relative;
+  color: #ffffff;
+  background: var(--panel);
+  border: 1px solid var(--panel-ring);
+  border-radius: 20px;
+  box-shadow: 0 24px 44px -28px rgba(7, 19, 48, 0.7);
+}
+.brand-panel .on-panel-2 { color: #c3cfe8; }
+.brand-panel .on-panel-3 { color: #a9b7d6; }
+
+/* Navy rail ornament field (sidebar footer card). */
+.rail-girih {
+  --ornament: rgba(159, 192, 255, 0.16);
+}
